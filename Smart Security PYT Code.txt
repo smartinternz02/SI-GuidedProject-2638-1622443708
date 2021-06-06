@@ -1,0 +1,31 @@
+import wiotp.sdk.device
+import time
+import random
+myConfig = { 
+    "identity": {
+        "orgId": "f69d3z",
+        "typeId": "ESP32",
+        "deviceId":"24282"
+    },
+    "auth": {
+        "token": "Saikumar2428@"
+    }
+}
+
+def myCommandCallback(cmd):
+    print("Message received from IBM IoT Platform: %s" % cmd.data)
+    m=cmd.data
+
+client = wiotp.sdk.device.DeviceClient(config=myConfig, logHandlers=None)
+client.connect()
+
+while True:
+    Name=str ("kevin")
+    ID=int (1447)
+    Duration=random.randint(27,32)
+    myData={'Name':Name, 'ID':ID, 'Duration':Duration}
+    client.publishEvent(eventId="status", msgFormat="json", data=myData, qos=0, onPublish=None)
+    print("Published data Successfully: %s", myData)
+    client.commandCallback = myCommandCallback
+    time.sleep(2)
+client.disconnect()
