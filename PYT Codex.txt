@@ -1,0 +1,55 @@
+import wiotp.sdk.device
+import time
+import random
+from datetime import datetime   
+myConfig = { 
+    "identity": {
+        "orgId": "uzkg5k",
+        "typeId": "ESP32",
+        "deviceId":"95505"
+    },
+    "auth": {
+        "token": "12345678"
+    }
+}
+
+def myCommandCallback(cmd):
+    print("Message received from IBM IoT Platform: %s" % cmd.data)
+    m=cmd.data
+  
+  
+
+client = wiotp.sdk.device.DeviceClient(config=myConfig, logHandlers=None)
+client.connect()
+
+while True:
+    ID1=1234
+    ID2=5647
+    NAME1=str("Ajay")
+    delay=random.randint(0,20)
+    delay1=random.randint(0,20)
+    time.sleep(delay)
+    t1=datetime.now()
+    print("delay=",delay)
+    print("delay1=",delay1)
+    dt1 = t1.strftime("%d/%m/%Y %H:%M:%S")  #ep1 entry time
+    time.sleep(delay)
+    t2=datetime.now()
+    dt2 = t2.strftime("%d/%m/%Y %H:%M:%S") #ep1 exit time
+    time.sleep(delay)
+    t0=datetime.now()
+    dt0 = t0.strftime("%d/%m/%Y %H:%M:%S")   #ep2 entry time
+    time.sleep(delay1)
+    t3=datetime.now()
+    dt3 = t3.strftime("%d/%m/%Y %H:%M:%S")   #ep2 exit time
+    time.sleep(delay1)
+    NAME2=str("Arun")
+    myData2={ 'ID1':ID1,'Name1':NAME1,'Entry_dt_of_ep1':dt1,'Exit_time_of_ep1':dt2,'Duration_of_ep1':delay,'ID2':ID2, 'Name2':NAME2,'Entry_dt_of_ep2':dt0,'Exit_time_of_ep2':dt3,'Duration_of_ep2':delay1}
+    client.publishEvent(eventId="status", msgFormat="json", data=myData2, qos=0, onPublish=None)
+    print("Published data Successfully: %s", myData2)
+    print("Detecting..........")
+         
+    client.commandCallback = myCommandCallback
+    time.sleep(1)
+  
+client.disconnect()
